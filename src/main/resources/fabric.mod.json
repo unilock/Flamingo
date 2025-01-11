@@ -1,31 +1,33 @@
 {
   "schemaVersion": 1,
   "id": "flamingo",
+  "version": "${version}",
   "name": "Pink Flamingo",
-  "version": "$version",
-  "environment": "*",
-  "license": "MIT",
-  "icon": "assets/flamingo/icon.png",
-  "entrypoints": {
-	"main": [
-	  "com.reddit.user.koppeh.flamingo.Flamingo"
-	],
-	"client": [
-	  "com.reddit.user.koppeh.flamingo.client.FlamingoClient"
-	]
-  },
-  "requires": {
-	"fabric": "*"
-  },
+  "description": "Adds a decorative pink flamingo block. Suggested by and dedicated to Reddit. Inspired by Dig Build Live.",
   "authors": [
-	"copygirl",
-	"Vexatos",
-	"asie"
+    "asie",
+    "copygirl",
+    "Vexatos"
   ],
   "contributors": [
-	"Prospector"
+    "Prospector"
   ],
-  "description": "Adds a decorative pink flamingo block. Suggested by and dedicated to Reddit. Inspired by Dig Build Live.",
+  "license": "MIT",
+  "icon": "assets/flamingo/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.reddit.user.koppeh.flamingo.Flamingo"
+    ],
+    "client": [
+      "com.reddit.user.koppeh.flamingo.client.FlamingoClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=1.18",
+    "fabric": "*"
+  },
   "mixins": [
     "flamingo.mixins.json"
   ]
