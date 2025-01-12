@@ -1,32 +1,35 @@
 {
-  "parent": "minecraft:recipes/root",
-  "rewards": {
-	"recipes": [
-	  "flamingo:flamingo"
-	]
-  },
-  "criteria": {
-	"has_pink_wool": {
-	  "trigger": "minecraft:inventory_changed",
-	  "conditions": {
-		"items": [
-		  {
-			"item": "minecraft:pink_wool"
-		  }
-		]
-	  }
+	"parent": "minecraft:recipes/root",
+	"criteria": {
+		"has_pink_wool": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"items": [
+							"minecraft:pink_wool"
+						]
+					}
+				]
+			}
+		},
+		"has_the_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "flamingo:flamingo"
+			}
+		}
 	},
-	"has_the_recipe": {
-	  "trigger": "minecraft:recipe_unlocked",
-	  "conditions": {
-		"recipe": "flamingo:flamingo"
-	  }
-	}
-  },
-  "requirements": [
-	[
-	  "has_pink_wool",
-	  "has_the_recipe"
-	]
-  ]
+	"requirements": [
+		[
+			"has_pink_wool",
+			"has_the_recipe"
+		]
+	],
+	"rewards": {
+		"recipes": [
+			"flamingo:flamingo"
+		]
+	},
+	"sends_telemetry_event": false
 }

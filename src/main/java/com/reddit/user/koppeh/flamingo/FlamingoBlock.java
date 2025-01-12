@@ -1,27 +1,24 @@
 package com.reddit.user.koppeh.flamingo;
 
-import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
 
-public class FlamingoBlock extends Block implements BlockEntityProvider, BlockAttackInteractionAware {
+public class FlamingoBlock extends BlockWithEntity {
 
 	public static final IntProperty ROTATION = IntProperty.of("rotation", 0, 15);
 	private static final VoxelShape OUTLINE_SHAPE = Block.createCuboidShape(3, 0, 3, 13, 17, 13);
@@ -31,14 +28,12 @@ public class FlamingoBlock extends Block implements BlockEntityProvider, BlockAt
 	}
 
 	@Override
-	@Deprecated
-	public VoxelShape getOutlineShape(BlockState blockState_1, BlockView blockView_1, BlockPos blockPos_1, ShapeContext context) {
+	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
 		return OUTLINE_SHAPE;
 	}
 
 	@Override
-	@Deprecated
-	public BlockRenderType getRenderType(BlockState var1) {
+	public BlockRenderType getRenderType(BlockState state) {
 		return BlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
@@ -49,23 +44,17 @@ public class FlamingoBlock extends Block implements BlockEntityProvider, BlockAt
 	}
 
 	@Override
-	public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity player, ItemStack stack) {
-		int rotation = ((Math.round((((player.getYaw() + 180) % 360) * 16 / 360)) % 16) + 16) % 16;
-		world.setBlockState(pos, state.with(ROTATION, rotation), 3);
-	}
-
-	@Override
-	public boolean onAttackInteraction(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, Direction direction) {
-		if (!world.isClient && world.getBlockEntity(pos) instanceof FlamingoBlockEntity) {
-			world.addSyncedBlockEvent(pos, this, 0, 0);
+	public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+		if (placer != null) {
+			int rotation = ((Math.round(((placer.getYaw() + 180) % 360) * 16 / 360) % 16) + 16) % 16;
+			world.setBlockState(pos, state.with(ROTATION, rotation), 3);
 		}
-		return false;
 	}
 
 	@Override
 	public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
-		if (world.getBlockEntity(pos) != null) {
-			((FlamingoBlockEntity) world.getBlockEntity(pos)).wiggle();
+		if (world.getBlockEntity(pos) instanceof FlamingoBlockEntity flamingo) {
+			flamingo.wiggle();
 			return true;
 		}
 		return false;
@@ -78,11 +67,6 @@ public class FlamingoBlock extends Block implements BlockEntityProvider, BlockAt
 
 	@Override
 	public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-		return world.isClient() ? FlamingoBlockEntity::tick : null;
-	}
-
-	@Override
-	public @Nullable <T extends BlockEntity> GameEventListener getGameEventListener(World world, T blockEntity) {
-		return null;
+		return checkType(type, Flamingo.FLAMINGO_BLOCK_ENTITY, world.isClient() ? FlamingoBlockEntity::tick : null);
 	}
 }

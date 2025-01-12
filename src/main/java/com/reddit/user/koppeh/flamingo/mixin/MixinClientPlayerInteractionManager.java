@@ -1,10 +1,11 @@
 package com.reddit.user.koppeh.flamingo.mixin;
 
-import com.reddit.user.koppeh.flamingo.FlamingoBlock;
+import com.reddit.user.koppeh.flamingo.Flamingo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.network.SequencedPacketCreator;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
@@ -25,17 +26,13 @@ public abstract class MixinClientPlayerInteractionManager {
     private GameMode gameMode;
 
     @Shadow
-    protected abstract void sendPlayerAction(PlayerActionC2SPacket.Action action, BlockPos pos, Direction direction);
+    protected abstract void sendSequencedPacket(ClientWorld world, SequencedPacketCreator packetCreator);
 
     @Inject(at = @At("HEAD"), method = "attackBlock", cancellable = true)
-    public void attackBlock(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> info) {
-        if (gameMode != GameMode.ADVENTURE) return;
-
-        var block = client.world.getBlockState(pos);
-        if (!(block.getBlock() instanceof FlamingoBlock flamingo)) return;
-
-        flamingo.onAttackInteraction(block, client.world, pos, client.player, Hand.MAIN_HAND, direction);
-        sendPlayerAction(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, direction);
-        info.setReturnValue(true);
+    public void attackBlock(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        if (this.gameMode == GameMode.ADVENTURE && this.client.world.getBlockState(pos).isOf(Flamingo.FLAMINGO_BLOCK)) {
+            this.sendSequencedPacket(this.client.world, sequence -> new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, pos, direction, sequence));
+            cir.setReturnValue(true);
+        }
     }
 }

@@ -1,5 +1,7 @@
 {
-  "variants": {
-	"": { "model": "flamingo:block/flamingo" }
-  }
+	"variants": {
+		"": {
+        	"model": "flamingo:block/flamingo"
+        }
+	}
 }

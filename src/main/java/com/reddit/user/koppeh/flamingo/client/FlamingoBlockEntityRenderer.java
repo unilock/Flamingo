@@ -11,21 +11,20 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.BlockView;
 
 public class FlamingoBlockEntityRenderer implements BlockEntityRenderer<FlamingoBlockEntity> {
 
-	public static final EntityModelLayer flamingoLayer = new EntityModelLayer(new Identifier(Flamingo.MOD_ID, "flamingo"), "flamingo");
-	private final Identifier resource = new Identifier("flamingo", "textures/model/flamingo.png");
-	private final ModelPart model;
+	protected static final EntityModelLayer flamingoLayer = new EntityModelLayer(Flamingo.id("flamingo"), "flamingo");
 	private static final FlamingoBlockEntity flamingoRender = new FlamingoBlockEntity(BlockPos.ORIGIN, Flamingo.FLAMINGO_BLOCK.getDefaultState());
+	private static final Identifier flamingoResource = Flamingo.id("textures/model/flamingo.png");
+	private final ModelPart model;
 
 	public FlamingoBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
 		this.model = ctx.getLayerModelPart(flamingoLayer);
@@ -50,21 +49,21 @@ public class FlamingoBlockEntityRenderer implements BlockEntityRenderer<Flamingo
 		matrixStack.push();
 
 		matrixStack.translate(0.5F, 0, 0.5F);
-		matrixStack.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(rotation));
-		matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(1F));
+		matrixStack.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(rotation));
+		matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(1F));
 		matrixStack.translate(0.0, 1.5, 0.0);
-		matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(180F));
+		matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180F));
 		matrixStack.translate(0.0, 1.5, 0.0);
-		matrixStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(wiggle));
+		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(wiggle));
 		matrixStack.translate(0.0, -1.5, 0.0);
 
-		model.render(matrixStack, vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(resource)), i, j, 1F, 1F, 1F, 1F);
+		model.render(matrixStack, vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(flamingoResource)), i, j, 1F, 1F, 1F, 1F);
 
 		matrixStack.pop();
 	}
 
-	public static void renderItem(ItemStack stack, ModelTransformation.Mode mode, MatrixStack matrix, VertexConsumerProvider vcp, int light, int overlay) {
-		if (Registry.ITEM.getId(stack.getItem()).equals(new Identifier(Flamingo.MOD_ID, "flamingo"))) {
+	public static void renderItem(ItemStack stack, ModelTransformationMode mode, MatrixStack matrix, VertexConsumerProvider vcp, int light, int overlay) {
+		if (stack.isOf(Flamingo.FLAMINGO_ITEM)) {
 			MinecraftClient.getInstance().getBlockEntityRenderDispatcher().renderEntity(flamingoRender, matrix, vcp, light, overlay);
 		}
 	}

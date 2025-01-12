@@ -1,21 +1,23 @@
 {
-  "type": "crafting_shaped",
-  "group": "flamingo",
-  "pattern": [
-	"o  ",
-	"ooo",
-	" / "
-  ],
-  "key": {
-	"o": {
-	  "item": "minecraft:pink_wool"
+	"type": "minecraft:crafting_shaped",
+	"category": "building",
+	"group": "flamingo",
+	"pattern": [
+		"o  ",
+		"ooo",
+		" / "
+	],
+	"key": {
+		"o": {
+			"item": "minecraft:pink_wool"
+		},
+		"/": {
+			"item": "minecraft:stick"
+		}
 	},
-	"/": {
-	  "item": "minecraft:stick"
-	}
-  },
-  "result": {
-	"item": "flamingo:flamingo",
-	"count": 1
-  }
+	"result": {
+		"item": "flamingo:flamingo",
+		"count": 1
+	},
+	"show_notification": true
 }

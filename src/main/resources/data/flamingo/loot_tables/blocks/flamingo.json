@@ -1,19 +1,20 @@
 {
-  "type": "minecraft:block",
-  "pools": [
-	{
-	  "rolls": 1,
-	  "entries": [
+	"type": "minecraft:block",
+	"pools": [
 		{
-		  "type": "minecraft:item",
-		  "name": "flamingo:flamingo"
+			"rolls": 1.0,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "flamingo:flamingo"
+				}
+			],
+			"conditions": [
+				{
+					"condition": "minecraft:survives_explosion"
+				}
+			]
 		}
-	  ],
-	  "conditions": [
-		{
-		  "condition": "minecraft:survives_explosion"
-		}
-	  ]
-	}
-  ]
+	],
+	"random_sequence": "flamingo:blocks/flamingo"
 }
