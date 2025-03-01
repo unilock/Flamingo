@@ -1,5 +1,6 @@
 package com.reddit.user.koppeh.flamingo;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -9,9 +10,12 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -22,9 +26,15 @@ public class FlamingoBlock extends BlockWithEntity {
 
 	public static final IntProperty ROTATION = IntProperty.of("rotation", 0, 15);
 	private static final VoxelShape OUTLINE_SHAPE = Block.createCuboidShape(3, 0, 3, 13, 17, 13);
+	private static final MapCodec<FlamingoBlock> CODEC = createCodec(FlamingoBlock::new);
 
 	public FlamingoBlock(Settings settings) {
 		super(settings);
+	}
+
+	@Override
+	protected MapCodec<? extends BlockWithEntity> getCodec() {
+		return CODEC;
 	}
 
 	@Override
@@ -52,6 +62,15 @@ public class FlamingoBlock extends BlockWithEntity {
 	}
 
 	@Override
+	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+		if (!player.isSpectator() && !world.isClient && world.getBlockEntity(pos) instanceof FlamingoBlockEntity) {
+			world.addSyncedBlockEvent(pos, Flamingo.FLAMINGO_BLOCK, 0, 0);
+			return ActionResult.SUCCESS;
+		}
+		return super.onUse(state, world, pos, player, hit);
+	}
+
+	@Override
 	public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
 		if (world.getBlockEntity(pos) instanceof FlamingoBlockEntity flamingo) {
 			flamingo.wiggle();
@@ -67,6 +86,6 @@ public class FlamingoBlock extends BlockWithEntity {
 
 	@Override
 	public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-		return checkType(type, Flamingo.FLAMINGO_BLOCK_ENTITY, world.isClient() ? FlamingoBlockEntity::tick : null);
+		return validateTicker(type, Flamingo.FLAMINGO_BLOCK_ENTITY, world.isClient() ? FlamingoBlockEntity::tick : null);
 	}
 }

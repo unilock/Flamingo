@@ -3,7 +3,6 @@ package com.reddit.user.koppeh.flamingo;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -23,7 +22,7 @@ public class Flamingo implements ModInitializer {
 	public static final String MOD_ID = "flamingo";
 
 	public static final Block FLAMINGO_BLOCK = register("flamingo", new FlamingoBlock(AbstractBlock.Settings.create().mapColor(MapColor.PINK).strength(0.8F).hardness(1.5F).sounds(BlockSoundGroup.WOOL).burnable()));
-	public static final BlockEntityType<FlamingoBlockEntity> FLAMINGO_BLOCK_ENTITY = register("flamingo", FabricBlockEntityTypeBuilder.create(FlamingoBlockEntity::new, FLAMINGO_BLOCK));
+	public static final BlockEntityType<FlamingoBlockEntity> FLAMINGO_BLOCK_ENTITY = register("flamingo", BlockEntityType.Builder.create(FlamingoBlockEntity::new, FLAMINGO_BLOCK));
 
 	public static final Item FLAMINGO_ITEM = Items.register(FLAMINGO_BLOCK);
 
@@ -31,12 +30,12 @@ public class Flamingo implements ModInitializer {
 		return Registry.register(Registries.BLOCK, id(name), block);
 	}
 
-	public static <T extends BlockEntity> BlockEntityType<T> register(String name, FabricBlockEntityTypeBuilder<T> builder) {
+	public static <T extends BlockEntity> BlockEntityType<T> register(String name, BlockEntityType.Builder<T> builder) {
 		return Registry.register(Registries.BLOCK_ENTITY_TYPE, id(name), builder.build());
 	}
 
 	public static Identifier id(String path) {
-		return new Identifier(MOD_ID, path);
+		return Identifier.of(MOD_ID, path);
 	}
 
 	@Override
