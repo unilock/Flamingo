@@ -9,9 +9,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -49,6 +53,15 @@ public class FlamingoBlock extends BlockWithEntity {
 			int rotation = ((Math.round(((placer.getYaw() + 180) % 360) * 16 / 360) % 16) + 16) % 16;
 			world.setBlockState(pos, state.with(ROTATION, rotation), 3);
 		}
+	}
+
+	@Override
+	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		if (!player.isSpectator() && !world.isClient && world.getBlockEntity(pos) instanceof FlamingoBlockEntity) {
+			world.addSyncedBlockEvent(pos, Flamingo.FLAMINGO_BLOCK, 0, 0);
+			return ActionResult.SUCCESS;
+		}
+		return super.onUse(state, world, pos, player, hand, hit);
 	}
 
 	@Override

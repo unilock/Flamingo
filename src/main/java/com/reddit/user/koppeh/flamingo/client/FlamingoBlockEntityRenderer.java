@@ -31,7 +31,7 @@ public class FlamingoBlockEntityRenderer implements BlockEntityRenderer<Flamingo
 	}
 
 	@Override
-	public void render(FlamingoBlockEntity flamingo, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j) {
+	public void render(FlamingoBlockEntity flamingo, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, int overlay) {
 		int rotation = 0;
 		float wiggle = 0;
 
@@ -57,7 +57,7 @@ public class FlamingoBlockEntityRenderer implements BlockEntityRenderer<Flamingo
 		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(wiggle));
 		matrixStack.translate(0.0, -1.5, 0.0);
 
-		model.render(matrixStack, vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(flamingoResource)), i, j, 1F, 1F, 1F, 1F);
+		model.render(matrixStack, vertexConsumerProvider.getBuffer(RenderLayer.getEntitySolid(flamingoResource)), light, overlay, 1F, 1F, 1F, 1F);
 
 		matrixStack.pop();
 	}
